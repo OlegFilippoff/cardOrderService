@@ -1,5 +1,5 @@
 # cardOrderService
-
+[![Build status](https://ci.appveyor.com/api/projects/status/hn60msmv6loyljha/branch/master?svg=true)](https://ci.appveyor.com/project/OlegFilippoff/cardorderservice/branch/master)
 ## Задача №1 - Заказ карты
 
 Вам необходимо автоматизировать тестирование формы заказа карты:
