@@ -48,14 +48,12 @@ public class CardOrderServiceTest {
         open("http://localhost:9999/");
 
         $("input[name='name']").setValue("Алёна Мирова");
-        $(".input__sub").exists();
-        // баг, не валидирует Ё
         $("input[type='tel']").setValue("+79995551122");
         $x("//span[@class='checkbox__box']").click();
         $x("//button").click();
         boolean actual = $(".paragraph[data-test-id]").isDisplayed();
 
-        assertEquals(true, actual);
+        assertEquals(true, actual, "Не валидирует букву Ё в поле имя, баг");
 
     }
 
@@ -142,15 +140,13 @@ public class CardOrderServiceTest {
         open("http://localhost:9999/");
 
         $("input[name='name']").sendKeys("  Пашка   Фейсконтроль  ");
-        boolean actualAdditional = $(".input__sub").exists();
-        assertEquals(true, actualAdditional);
 
         $("input[type='tel']").setValue("+79995551122");
         $x("//span[@class='checkbox__box']").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
 
-        assertEquals(false, actual);
+        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
+        assertEquals(true, actual);
 
     }
 
