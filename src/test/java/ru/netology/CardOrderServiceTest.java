@@ -33,7 +33,6 @@ public class CardOrderServiceTest {
         open("http://localhost:9999/");
 
         $("input[name='name']").setValue("Йорик Кнаус");
-        //$('.input__sub') - баг не проходит
         $("input[type='tel']").setValue("+79995551122");
         $x("//span[@class='checkbox__box']").click();
         $x("//button").click();
@@ -51,10 +50,9 @@ public class CardOrderServiceTest {
         $("input[type='tel']").setValue("+79995551122");
         $x("//span[@class='checkbox__box']").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(true, actual, "Не валидирует букву Ё в поле имя, баг");
-
+        String actualMessage = $(".input_invalid .input__sub").getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+        assertEquals(expectedMessage, actualMessage, "Не валидирует букву Ё в поле имя, баг");
     }
 
     @Test
@@ -226,6 +224,17 @@ public class CardOrderServiceTest {
         $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
+    @Test
+    void shouldTestTelWithDashes() {
+        open("http://localhost:9999/");
+
+        $("input[name='name']").sendKeys("Привет");
+
+        $("input[type='tel']").setValue("+7-915-123-78-89");
+        $x("//button").click();
+        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+
+    }
 
     @Test
     void shouldTestTelWithletter() {
@@ -246,5 +255,14 @@ public class CardOrderServiceTest {
         $x("//span[@class='checkbox__box']").click();
         boolean actual = $(".checkbox_checked").isDisplayed();
         assertEquals(true, actual);
+    }
+
+    @Test
+    void shouldTestAgreementBoxUnchecked() {
+        open("http://localhost:9999/");
+
+        $x("//span[@class='checkbox__box']").doubleClick();
+        boolean actual = $(".checkbox_checked").isDisplayed();
+        assertEquals(false, actual);
     }
 }
