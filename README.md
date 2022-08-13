@@ -1,5 +1,5 @@
 # cardOrderService
-
+[![Build status](https://ci.appveyor.com/api/projects/status/hn60msmv6loyljha/branch/master?svg=true)](https://ci.appveyor.com/project/OlegFilippoff/cardorderservice/branch/master)
 ## Задача №1 - Заказ карты
 
 Вам необходимо автоматизировать тестирование формы заказа карты:
@@ -39,3 +39,20 @@
 `java -jar app-order.jar -port=7777`
 
 Убедиться, что приложение работает, вы можете открыв в браузере страницу: http://localhost:9999
+## Задача №2 - Проверка валидации (необязательная)
+
+После того, как вы протестировали Happy Path, необходимо протестировать остальные варианты.
+
+Тестируемая функциональность: валидация полей перед отправкой.
+
+Условия: если какое-то поле не заполнено, или заполнено неверно, то при нажатии на кнопку "Продолжить" должны появляться сообщения об ошибке (будет подсвечено только первое неправильно заполненное поле):
+
+![image](https://user-images.githubusercontent.com/94902304/183974819-0b1a92db-c499-4de7-8b3e-2b4fcb7064f0.png)
+![image](https://user-images.githubusercontent.com/94902304/183974894-bd4b0f6c-8309-4e82-9bbe-ac328f7b72ce.png)
+
+
+<details>
+    <summary>Подсказка</summary>
+
+    У некоторых элементов на странице появится css-класс `input_invalid`.
+</details>
