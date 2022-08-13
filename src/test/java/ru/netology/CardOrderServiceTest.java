@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,6 +20,7 @@ public class CardOrderServiceTest {
     @BeforeEach
     void setUp() {
         Configuration.holdBrowserOpen = true;
+        open("http://localhost:9999/");
     }
 
     @AfterEach
@@ -30,239 +31,157 @@ public class CardOrderServiceTest {
 
     @Test
     void shouldTestNameFieldUsingRussianY() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("Йорик Кнаус");
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        String expected = ("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.");
-        String actual = $("[data-test-id]").getText().trim();
-        assertEquals(expected, actual);
-
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestNameFieldUsingRussianYo() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("Алёна Мирова");
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        String actualMessage = $(".input_invalid .input__sub").getText();
-        String expectedMessage = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        assertEquals(expectedMessage, actualMessage, "Не валидирует букву Ё в поле имя, баг");
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestNameFieldUsingDash() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("Дарья Мирова-Мирченко");
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(true, actual);
-
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestEmptyNameField() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("");
-
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".input__sub").exists();
-
-        assertEquals(true, actual);
-
+        $("[data-test-id=name].input_invalid span.input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
     }
 
     @Test
     void shouldTestCamelCaseName() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("АнДрЕй СмИРНОв");
-
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(true, actual);
-
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestNameWithNumbers() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("АР2Д2");
-        boolean actualAdditional = $(".input__sub").exists();
-        assertEquals(true, actualAdditional);
-
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(false, actual);
-
+        $("[data-test-id=name].input_invalid span.input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldTestLatinNames() {
-        open("http://localhost:9999/");
-
         $("input[name='name']").setValue("JuanMoralezDeMariaLuizaGonzelez");
-        boolean actualAdditional = $(".input__sub").exists();
-        assertEquals(true, actualAdditional);
-
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(false, actual);
-
+        $("[data-test-id=name].input_invalid span.input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldTestSpacesInNames() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("  Пашка   Фейсконтроль  ");
-
+        $("input[name='name']").setValue("  Пашка   Фейсконтроль  ");
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-        assertEquals(true, actual);
-
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestSymbols() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("О!Р=И(АНН*А");
-        boolean actualAdditional = $(".input__sub").exists();
-        assertEquals(true, actualAdditional);
-
+        $("input[name='name']").setValue("О!Р=И(АНН*А");
         $("input[type='tel']").setValue("+79995551122");
-        $x("//span[@class='checkbox__box']").click();
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
-        boolean actual = $(".paragraph[data-test-id]").isDisplayed();
-
-        assertEquals(false, actual);
-
+        $("[data-test-id=name].input_invalid span.input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldTestEmptyЕTel() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Поле обязательно для заполнения"));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
 
     }
 
     @Test
     void shouldTestTelStartsFrom8() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("88005002321");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
     void shouldTestTelLessThan10Numbers() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7123456789");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
     void shouldTestTel1Number() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("7");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
     void shouldTestTelWithCommas() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7.915.123.78.89");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
+
     @Test
     void shouldTestTelWithDashes() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7-915-123-78-89");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
-    void shouldTestTelWithletter() {
-        open("http://localhost:9999/");
-
-        $("input[name='name']").sendKeys("Привет");
-
+    void shouldTestTelWithLetter() {
+        $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7один23456789QA");
         $x("//button").click();
-        $$(".input__sub").get(1).shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+        $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
     }
 
     @Test
     void shouldTestAgreementBox() {
-        open("http://localhost:9999/");
-
-        $x("//span[@class='checkbox__box']").click();
-        boolean actual = $(".checkbox_checked").isDisplayed();
-        assertEquals(true, actual);
+        $("[data-test-id=agreement]").click();
+        $("[data-test-id=agreement].checkbox_checked").isEnabled();
     }
 
     @Test
     void shouldTestAgreementBoxUnchecked() {
-        open("http://localhost:9999/");
-
-        $x("//span[@class='checkbox__box']").doubleClick();
-        boolean actual = $(".checkbox_checked").isDisplayed();
-        assertEquals(false, actual);
+        $("[data-test-id=agreement]").doubleClick();
+        $("[data-test-id=agreement].checkbox_checked").shouldNot(exist);
     }
 }
