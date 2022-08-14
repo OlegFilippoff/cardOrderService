@@ -1,19 +1,15 @@
 package ru.netology;
 
-import com.codeborne.selenide.Condition;
+
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class CardOrderServiceTest {
 
@@ -45,6 +41,7 @@ public class CardOrderServiceTest {
         $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
+        screenshot("shouldTestNameFieldUsingRussianYo");
     }
 
     @Test
@@ -114,6 +111,7 @@ public class CardOrderServiceTest {
     void shouldTestEmptyЕTel() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
 
@@ -123,6 +121,7 @@ public class CardOrderServiceTest {
     void shouldTestTelStartsFrom8() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("88005002321");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -132,6 +131,7 @@ public class CardOrderServiceTest {
     void shouldTestTelLessThan10Numbers() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7123456789");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -141,6 +141,7 @@ public class CardOrderServiceTest {
     void shouldTestTel1Number() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("7");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -150,6 +151,7 @@ public class CardOrderServiceTest {
     void shouldTestTelWithCommas() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7.915.123.78.89");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -159,6 +161,7 @@ public class CardOrderServiceTest {
     void shouldTestTelWithDashes() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7-915-123-78-89");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -168,6 +171,7 @@ public class CardOrderServiceTest {
     void shouldTestTelWithLetter() {
         $("input[name='name']").setValue("Привет");
         $("input[type='tel']").setValue("+7один23456789QA");
+        $("[data-test-id=agreement]").click();
         $x("//button").click();
         $("[data-test-id=phone].input_invalid span.input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
 
@@ -175,13 +179,21 @@ public class CardOrderServiceTest {
 
     @Test
     void shouldTestAgreementBox() {
+        $("input[name='name']").setValue("Олды оглы");
+        $("input[type='tel']").setValue("+79876541232");
         $("[data-test-id=agreement]").click();
         $("[data-test-id=agreement].checkbox_checked").isEnabled();
+        $x("//button").click();
+        $("[data-test-id=order-success]").shouldHave(exactText("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldTestAgreementBoxUnchecked() {
+        $("input[name='name']").setValue("Олды оглы");
+        $("input[type='tel']").setValue("+79876541232");
         $("[data-test-id=agreement]").doubleClick();
-        $("[data-test-id=agreement].checkbox_checked").shouldNot(exist);
+        $x("//button").click();
+        $("label.input_invalid").shouldBe(visible);
     }
+
 }
